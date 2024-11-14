@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package example.grpc.api.v1;
+
+option go_package = "github.com/dimoktorr/unit_tests/intergation/pkg/api/v1";
+
+service ExampleService {
+  rpc GetExample(GetRequest) returns (GetResponse) {};
+}
+
+message GetRequest {
+  uint32 id = 1;
+}
+
+message GetResponse{
+  repeated Example examples = 1;
+}
+
+message Example {
+  string first_name = 1;
+  string last_name = 2;
+  string description = 3;
+}
+
+//v1.0.0
+message User{
+  string login = 1;
+  string password = 2;
+}
+
+//v1.1.0
+message User1{
+  oneof identifier {
+    string login = 1;
+    string email = 2;
+  }
+  string password = 3;
+}
+
+//v1.1.0
+message User2{
+  string login = 1;
+  string password = 2;
+  Info info = 3;
+}
+
+message Info{
+  string email = 1;
+  string phone = 2;
+}

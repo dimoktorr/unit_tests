@@ -1,0 +1,174 @@
+serviceName: example
+containers:
+  - name: example
+    ## Env
+    ## https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/
+    ##
+    env:
+      APP_VERSION: "dev"
+      SERVICE_NAME: "example"
+      SERVICE_HTTP_PORT: "8080"
+      SERVICE_GRPC_PORT: "8090"
+
+      # POSTGRES
+      DATABASE_POSTGRES_DSN: "host=postgresql-pooler user=example password=example dbname=example port=5432 sslmode=require TimeZone=Europe/Moscow"
+      DATABASE_POSTGRES_LOG_LEVEL: "DEBUG"
+
+      # REDIS
+      REDIS_HOSTS: "dragonfly:6379,"
+      REDIS_PASSWORD: "dr_pass"
+      REDIS_CALLBACK_TTL: "1m"
+##
+## Dependencies services
+## MongoDB
+mongodb:
+  enabled: true
+  fullnameOverride: "mongodb"
+  architecture: standalone
+  auth:
+    enabled: true
+    rootUser: "admin"
+    rootPassword: "admin"
+    usernames:
+      - ""
+    passwords:
+      - ""
+    databases:
+      - ""
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: false
+
+## PostgreSQL
+postgresql:
+  enabled: true
+  fullnameOverride: "postgresql"
+  version: 15
+  numberOfInstances: 1
+  enableConnectionPooler: true
+  ## username: password
+  usersPasswords:
+    example: example
+    developer: developer
+  usersRules:
+    ## DB usersRules
+    ## Пример пользователя с правами
+    developer: [ "superuser", "createdb" ]
+    ## Пользователь без прав для приложений
+    example: [ "superuser", "createdb" ]
+  databases:
+    ## db_name:db_owner
+    example: example
+  volume:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 150m
+      memory: 256Mi
+
+## Redis API Like
+dragonfly:
+  enabled: true
+  resources:
+    # -- The requested resources for the containers
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    # -- The resource limits for the containers
+    limits:
+      cpu: 100m
+      memory: 128Mi
+  # -- Extra arguments to pass to the dragonfly binary
+  extraArgs:
+    - "--cluster_mode=emulated"
+    - "--requirepass=dr_pass"
+
+kafka-ui:
+  enabled: false
+  resources:
+    limits:
+      cpu: 200m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  env:
+    - name: KAFKA_CLUSTERS_0_NAME
+      value: local
+    - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+      value: kafka:9092
+    - name: KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL
+      value: SASL_PLAINTEXT
+    - name: KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM
+      value: PLAIN
+    - name: KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG
+      value: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="user" password="user_password";'
+    - name: AUTH_ENABLED
+      value: "true"
+    - name: AUTH_TYPE
+      value: LOGIN_FORM
+    - name: SPRING_SECURITY_USER_NAME
+      value: admin
+    - name: SPRING_SECURITY_USER_PASSWORD
+      value: admin_password
+
+kafka:
+  enabled: false
+  nameOverride: "kafka"
+  fullnameOverride: "kafka"
+  auth:
+    clientProtocol: sasl
+    externalClientProtocol: "sasl"
+    interBrokerProtocol: plaintext
+    sasl:
+      mechanisms: plain,scram-sha-256,scram-sha-512
+      interBrokerMechanism: plain
+      jaas:
+        clientUsers:
+          - user
+        clientPasswords:
+          - user_password
+        interBrokerUser: admin
+        interBrokerPassword: "admin_password"
+        zookeeperUser: "kafka"
+        zookeeperPassword: "kafka_password"
+        existingSecret: ""
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: false
+  kraft:
+    enabled: false
+  zookeeper:
+    enabled: true
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        memory: 256Mi
+        cpu: 250m
+    auth:
+      client:
+        enabled: true
+        clientUser: "kafka"
+        clientPassword: "kafka_password"
+        serverUsers: "kafka"
+        serverPasswords: "kafka_password"
+    persistence:
+      enabled: false
