@@ -27,6 +27,7 @@ func Test_toModelsProduct(t *testing.T) {
 
 	createdAt := time.Date(2021, 11, 17, 16, 31, 12, 0, time.UTC)
 	updatedAt := time.Date(2021, 11, 17, 16, 31, 12, 0, time.UTC)
+
 	testData := []struct {
 		description string
 		input       *models.Product
@@ -55,6 +56,7 @@ func Test_toModelsProduct(t *testing.T) {
 						User: &models.User{
 							ID:        1,
 							Username:  "user",
+							NickName:  "nickname",
 							Email:     "test@mail.ru",
 							Password:  "45356hbjhvjwer23424",
 							CreatedAt: createdAt,
@@ -92,7 +94,7 @@ func Test_toModelsProduct(t *testing.T) {
 				ID:          100,
 				Name:        "product",
 				Description: "description",
-				Price:       55555.0,
+				Price:       55554.0,
 				InStock:     true,
 				Category: &Category{
 					ID:          5,
@@ -109,6 +111,7 @@ func Test_toModelsProduct(t *testing.T) {
 						User: &User{
 							ID:        1,
 							Username:  "user",
+							NickName:  "nickname",
 							Email:     "test@mail.ru",
 							Password:  "45356hbjhvjwer23424",
 							CreatedAt: createdAt,

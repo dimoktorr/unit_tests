@@ -1,10 +1,11 @@
 package task1
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
-func TestProducts_TotalPrice(t *testing.T) {
+func TestProducts_TotalPrice_Ok(t *testing.T) {
 	//Arrange
 	products := Products{
 		{
@@ -31,12 +32,22 @@ func TestProducts_TotalPrice(t *testing.T) {
 	got := products.TotalPrice()
 
 	//Assert
-	if got != want {
-		t.Errorf("TotalPrice() = %f; want %f", got, want)
-	}
+	assert.Equal(t, want, got)
+}
+func TestProducts_TotalPrice_IsEmpty(t *testing.T) {
+	//Arrange
+	products := Products{}
+
+	var want float64 = 0
+
+	//Act
+	got := products.TotalPrice()
+
+	//Assert
+	assert.Equal(t, want, got)
 }
 
-func TestProducts_TotalPrice_tableTest(t *testing.T) {
+func TestProducts_TotalPrice(t *testing.T) {
 	//Arrange
 	testData := []struct {
 		description string
@@ -44,7 +55,7 @@ func TestProducts_TotalPrice_tableTest(t *testing.T) {
 		want        float64
 	}{
 		{
-			description: "test_1",
+			description: "ok",
 			products: Products{
 				{
 					ID:    1,
@@ -66,7 +77,7 @@ func TestProducts_TotalPrice_tableTest(t *testing.T) {
 			want: 14971.09,
 		},
 		{
-			description: "test_2",
+			description: "one elem",
 			products: Products{
 				{
 					ID:    1,
@@ -76,19 +87,21 @@ func TestProducts_TotalPrice_tableTest(t *testing.T) {
 			want: 4545.34,
 		},
 		{
-			description: "test_3",
+			description: "empty",
 			products:    Products{},
 			want:        0,
 		},
 	}
 
 	for _, tt := range testData {
-		//Act
-		got := tt.products.TotalPrice()
+		t.Run(tt.description, func(t *testing.T) {
+			//Act
+			got := tt.products.TotalPrice()
 
-		//Assert
-		if got != tt.want {
-			t.Errorf("TotalPrice() = %f; want %f", got, tt.want)
-		}
+			//Assert
+			if got != tt.want {
+				t.Errorf("TotalPrice() = %f; want %f", got, tt.want)
+			}
+		})
 	}
 }

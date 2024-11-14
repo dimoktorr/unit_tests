@@ -67,6 +67,7 @@ func toModelsUser(user *models.User) *User {
 	return &User{
 		ID:        user.ID,
 		Username:  user.Username,
+		NickName:  user.NickName,
 		Email:     user.Email,
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt,

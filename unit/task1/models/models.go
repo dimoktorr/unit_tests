@@ -38,6 +38,7 @@ type Rating struct {
 type User struct {
 	ID        int
 	Username  string
+	NickName  string
 	Email     string
 	Password  string
 	CreatedAt time.Time

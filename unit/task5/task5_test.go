@@ -1,6 +1,9 @@
 package task5_test
 
-import "testing"
+import (
+	"github.com/dimoktorr/unit_tests/unit/task5"
+	"testing"
+)
 
 func Test_sum(t *testing.T) {
 	//Arrange
@@ -9,7 +12,7 @@ func Test_sum(t *testing.T) {
 	want := 10
 
 	//Act
-	got := sum(a, b)
+	got := task5.Sum(a, b)
 
 	//Assert
 	if got != want {

@@ -26,9 +26,7 @@ func TestRequestHandler(t *testing.T) {
 	res := w.Result()
 	defer res.Body.Close()
 	got, err := io.ReadAll(res.Body)
-	if err != nil {
-		t.Errorf("Error: %v", err)
-	}
+	assert.Nil(t, err)
 
 	assert.Equal(t, expected, string(got))
 }
